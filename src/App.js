@@ -1,23 +1,30 @@
-import logo from './logo.svg';
 import './App.css';
+import React, {useState, useEffect} from 'react';
+import SmartRockets from './components/SmartRockets';
+import Nav from './components/Nav';
+import PathFinder from './components/PathFinder';
+
 
 function App() {
+  const [page, setPage] = useState('rockets');
+
+  const pages = {
+    'rockets': <SmartRockets/>,
+    'paths': <PathFinder/>,
+  }
+
+  const changePage = (newPage) => {
+    setPage(newPage)
+  }
+
+  let currentPage = pages[page];
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='main'>
+      <Nav pages={pages} changePage={changePage}/>
+      <div id='page' className='page'>
+        {currentPage}
+      </div>
     </div>
   );
 }

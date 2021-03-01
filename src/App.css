@@ -1,38 +1,60 @@
-.App {
-  text-align: center;
+.my-canvas {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.canvas-inputs {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.button1 {
+  background-color: aqua;
+  margin: 10px;
+  width: 80px;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.button1:hover {
+  background-color: rgb(255, 0, 221);
+  font-weight: bold;
+}
+
+.nav{
+  position: fixed;
+  background-color: cadetblue;
+  width: 100vw;
+  height:60px;
+  top: 0;
+}
+
+.page{
+  margin-top: 120px;
+}
+
+.link-container {
+  display: flex;
+  justify-content: space-around;
+  height: 60px;
+}
+
+.main {
+  font-family: 'Poppins', sans-serif;
+}
+
+.button2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  background-color: cadetblue;
+  border: 2px solid cadetblue;
+  border-radius: 10px;
+}
+
+.button2:hover {
+  background-color: blueviolet;
+  text-decoration: underline;
+
 }
