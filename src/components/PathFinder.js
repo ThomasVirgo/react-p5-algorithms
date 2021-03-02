@@ -2,19 +2,25 @@ import React, {useState, useEffect} from 'react';
 import p5 from 'p5';
 
 
-const PathFinder = () => {
-    let [myP5, setMyP5] = useState(undefined);
+const PathFinder = (props) => {
 
     const myRef = React.createRef();
+    let p5Object;
 
     useEffect(() => {
-        if (myP5!=undefined){
-            myP5.remove();
+        if (p5Object){
+            p5Object.remove();
             console.log('Removed P5 drawing');
         }
-        setMyP5(new p5(Sketch, myRef.current));
+        p5Object = new p5(Sketch, myRef.current);
         console.log('initalised an instance of a p5 object...');
-    
+        
+        return () =>{
+            console.log('unmounted pathfinder component')
+            p5Object.noLoop();
+            p5Object.remove();
+        }
+
     }, []);
 
     const Sketch = (p) => {
@@ -94,6 +100,7 @@ const PathFinder = () => {
 
         //start of draw loop
         p.draw = () => {
+            console.log('pathfinder is looping');
             // redraw the grid on each iteration to match the current state..(should try implementing only drawing cells that change)
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
@@ -198,7 +205,6 @@ const PathFinder = () => {
             p.mouseReleased = () => {
                 lockedStart = false;
                 lockedEnd = false;
-                console.log(grid);
             }
 
             //Dijkstras Algorithm 
@@ -239,15 +245,13 @@ const PathFinder = () => {
             // check if current node is the end node and hence search is complete
             if (currentNode.end == true){
                 console.log('complete');
-                console.log('total distance was: ', currentNode.distance)
-                console.log(grid);
+                console.log('total distance was: ', currentNode.distance);
                 let shortestPath = [];
                 let pathNode = currentNode;
                 shortestPath.push(currentNode);
                 let counter = 0;
                 while (pathNode.distance){
                     counter ++;
-                    console.log(pathNode);
                     let currentDistance = pathNode.distance;
                     let x = pathNode.colIdx;
                     let y = pathNode.rowIdx;
@@ -255,16 +259,13 @@ const PathFinder = () => {
                     for (let entry in potentialParents){
                         let a = potentialParents[entry][0];
                         let b = potentialParents[entry][1];
-                        console.log(a,b);
                         if (isInGrid(a,b) && grid[a][b]['distance'] == currentDistance - 1){
-                            console.log('new pathNode');
                             pathNode = grid[a][b];
                             shortestPath.push(pathNode);
                             break;
                         }
                     }
                 }
-                console.log(shortestPath);
                 for (let i=0; i<shortestPath.length; i++){
                     let myNode = shortestPath[i];
                     p.push();

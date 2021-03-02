@@ -54,7 +54,7 @@
 }
 
 .button2:hover {
-  background-color: blueviolet;
+  color:rgba(255, 0, 212, 0.7);
   text-decoration: underline;
 
 }

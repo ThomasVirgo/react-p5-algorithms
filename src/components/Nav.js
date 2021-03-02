@@ -11,6 +11,7 @@ const Nav = (props) => {
             <div id='link-container' className = 'link-container'>
                 <button onClick = {handlePageChange} name = 'rockets' className='button2'>Smart Rockets: Gentic Algorithms</button>
                 <button onClick = {handlePageChange} name = 'paths' className='button2'>Pathfinding Algorithms</button> 
+                <button onClick = {handlePageChange} name = 'sort' className='button2'>Sorting Algorithms</button> 
             </div>
         </div>
     )

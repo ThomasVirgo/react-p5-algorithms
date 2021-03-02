@@ -2,18 +2,23 @@ import React, { useEffect, useState } from 'react';
 import p5 from 'p5';
 
 const SmartRockets = (props) => {
-    let [myP5, setMyP5] = useState(undefined);
 
     const myRef = React.createRef();
+    let p5Object; 
 
     useEffect(() => {
-        if (myP5!=undefined){
-            myP5.remove();
+        console.log('rocket useEffect ran!');
+        if (p5Object){
+            p5Object.remove();
             console.log('Removed P5 drawing');
         }
-        setMyP5(new p5(Sketch, myRef.current));
-        console.log('initalised an instance of a p5 object...');
-    
+        p5Object = new p5(Sketch, myRef.current);
+        console.log('initalised an instance of a p5 object: ');
+        return () => { // clean up for when the component unmounts
+            console.log('component smartrockets unmounted, ran clean up');
+            p5Object.noLoop();
+            p5Object.remove();
+        };
     }, []);
 
 
@@ -102,6 +107,7 @@ const SmartRockets = (props) => {
         }
 
         p.draw = () => { //called over and over again to re-render drawing
+            console.log('smartrockets is looping...')
             target.x = sliderX.value();
             target.y = sliderY.value();
             p.background(0);
