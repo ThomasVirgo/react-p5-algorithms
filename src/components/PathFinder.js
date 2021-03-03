@@ -20,8 +20,7 @@ const PathFinder = (props) => {
             p5Object.noLoop();
             p5Object.remove();
         }
-
-    }, []);
+    }, []); //dependancies set as an empty array meaning this is only executed once on the first render. 
 
     const Sketch = (p) => {
         let grid, rows, cols, cellSize, maxWidth, maxHeight, rowIdx, colIdx, start, end, mouseInCanvas, aboveStart, aboveEnd, lockedStart, lockedEnd, aboveNode, currentNode;
@@ -30,13 +29,39 @@ const PathFinder = (props) => {
         maxWidth = window.innerWidth-50;
         maxHeight = window.innerHeight;
 
+        const toggleLoop = () => {
+            if (p.isLooping()){
+                p.noLoop();
+            } else {
+                p.loop();
+            }
+            console.log('pressed button')
+        }
         //start of setup function
         p.setup = () => {
             //p.createCanvas(maxWidth,maxHeight); // width, height.
-            p.createCanvas(1000,600);
+            let canvas = p.createCanvas(1000,600);
             p.background(0);
             rows = p.height/cellSize;
-            cols = p.width/cellSize;
+            cols = 800/cellSize;
+            //create key;
+            p.push()
+            p.fill('purple');
+            p.rect(825, 100, cellSize, cellSize, 5)
+            p.fill('blue')
+            p.rect(825, 150, cellSize, cellSize, 5)
+            p.fill(p.color(245, 167, 66));
+            p.rect(825, 200, cellSize, cellSize, 5)
+            //text for key
+            p.fill('white');
+            p.text('Start cell, drag to move', 850, 100, 100, 50);
+            p.text('End cell, drag to move', 850, 150, 100, 50);
+            p.text('Obstacle', 850, 205, 100, 50);
+            p.pop()
+            //create start stop button
+            let startButton = p.createButton('Start/Stop');
+            startButton.position(canvas.position().x + 875, canvas.position().y + 250);
+            startButton.mousePressed(toggleLoop);
             //create grid
             for (let i=0; i<rows; i++){
                 grid.push([]);

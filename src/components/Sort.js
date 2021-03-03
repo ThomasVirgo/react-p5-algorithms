@@ -27,13 +27,13 @@ const Sort = (props) => {
         let list = [];
         let canvasHeight = 600;
         let canvasWidth = 1200;
-        let barWidth = 10;
+        let barWidth = 5;
         let numBars = canvasWidth / barWidth;
 
         p.setup = () => {
             p.createCanvas(canvasWidth, canvasHeight);
             p.background(0);
-            p.frameRate(10); // executes the draw loop once per second
+            //p.frameRate(30); // executes the draw loop once per second
             for (let i = 0; i < numBars; i++) {
                 let barHeight = Math.floor(p.random() * canvasHeight)
                 list.push(barHeight);
