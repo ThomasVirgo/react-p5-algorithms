@@ -23,15 +23,14 @@ const PathFinder = (props) => {
     }, []); //dependancies set as an empty array meaning this is only executed once on the first render. 
 
     const Sketch = (p) => {
-        let grid, rows, cols, cellSize, maxWidth, maxHeight, rowIdx, colIdx, start, end, mouseInCanvas, aboveStart, aboveEnd, lockedStart, lockedEnd, aboveNode, currentNode;
+        let grid, rows, cols, cellSize, rowIdx, colIdx, start, end, mouseInCanvas, aboveStart, aboveEnd, aboveEmpty, lockedStart, lockedEnd, aboveNode, currentNode;
+        let searching = false;
         cellSize = 20;
         grid = [];
-        maxWidth = window.innerWidth-50;
-        maxHeight = window.innerHeight;
 
-        const toggleLoop = () => {
-            if (p.isLooping()){p.noLoop();} 
-            else {p.loop();}
+        const toggleSearch = () => {
+            searching = !searching;
+            console.log(searching);
         }
 
         const createStartGrid = () => {
@@ -39,9 +38,6 @@ const PathFinder = (props) => {
                 grid.push([]);
                 for (let j=0; j<cols; j++){
                     grid[i][j] = new Node(i,j);
-                    if (p.random() < 0.4 && i>1 && cols >1){
-                        grid[i][j]['obstacle'] = true;
-                    }
                 }
             }
             start = [0,0];
@@ -50,16 +46,16 @@ const PathFinder = (props) => {
             grid[0][0]['current'] = true;
             grid[0][0]['distance'] = 0;
             grid[Math.floor(rows/2)][Math.floor(cols/2)]['end'] = true;
-            p.noLoop();
+            p.loop();
+            searching = false;
         }
         //start of setup function
         p.setup = () => {
-            //p.createCanvas(maxWidth,maxHeight); // width, height.
             let canvas = p.createCanvas(1000,600);
             p.background(0);
             rows = p.height/cellSize;
             cols = 800/cellSize;
-            
+
             //create key;
             p.push()
             p.fill('purple');
@@ -73,13 +69,13 @@ const PathFinder = (props) => {
             p.fill('white');
             p.text('Start cell, drag to move', 850, 100, 100, 50);
             p.text('End cell, drag to move', 850, 150, 100, 50);
-            p.text('Obstacle', 850, 205, 100, 50);
+            p.text('Obstacle, click and drag to add', 850, 205, 130, 50);
             p.pop()
 
             //create start stop button
             let startButton = p.createButton('Start/Stop');
             startButton.position(canvas.position().x + 840, canvas.position().y + 250);
-            startButton.mousePressed(toggleLoop);
+            startButton.mousePressed(toggleSearch);
             startButton.addClass('button1');
 
             //create reset button
@@ -136,7 +132,6 @@ const PathFinder = (props) => {
 
         //start of draw loop
         p.draw = () => {
-            console.log('pathfinder is looping');
             // redraw the grid on each iteration to match the current state..(should try implementing only drawing cells that change)
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
@@ -190,6 +185,10 @@ const PathFinder = (props) => {
             if (mouseInCanvas && aboveNode.end == true){
                 aboveEnd = true;
             } else {aboveEnd = false}
+            
+            if (mouseInCanvas && aboveNode.obstacle == false && aboveNode.start == false && aboveNode.end == false){
+                aboveEmpty = true;
+            } else {aboveEmpty = false};
 
             p.mousePressed = () => { 
                 if (aboveStart){ //check if the mouse is pressed on the start cell
@@ -237,6 +236,14 @@ const PathFinder = (props) => {
                         grid[newRowIdx][newColIdx]['end'] = true;
                     }
                 }
+
+                if (aboveEmpty && mouseInCanvas){
+                    let newRowIdx = Math.floor(p.mouseY/cellSize);
+                    let newColIdx = Math.floor(p.mouseX/cellSize);
+                    if (isInGrid(newRowIdx, newColIdx)){
+                        grid[newRowIdx][newColIdx]['obstacle'] = true;
+                    }
+                }
             }
             p.mouseReleased = () => {
                 lockedStart = false;
@@ -245,7 +252,8 @@ const PathFinder = (props) => {
 
             //Dijkstras Algorithm 
             // find the current node we're looking at
-            for (let i=0; i<rows; i++){
+            if (searching){
+                for (let i=0; i<rows; i++){
                 let searchRow = grid[i];
                 let test = searchRow.find(element => element.current == true)
                 if (test){
@@ -321,7 +329,9 @@ const PathFinder = (props) => {
                 }
             }
             nextNode.current = true;
-        }
+            }
+            }
+            
     }
     //end of draw loop
 
