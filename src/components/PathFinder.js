@@ -178,7 +178,7 @@ const PathFinder = (props) => {
                     let newRowIdx = Math.floor(p.mouseY/cellSize);
                     let newColIdx = Math.floor(p.mouseX/cellSize);
 
-                    if (newRowIdx >=0 && newRowIdx < rows && newColIdx >=0 && newColIdx <cols){
+                    if (isInGrid(newRowIdx,newColIdx)){
                         var allowed = true;
                     } else {var allowed = false};
 
@@ -203,7 +203,7 @@ const PathFinder = (props) => {
                     let newRowIdx = Math.floor(p.mouseY/cellSize);
                     let newColIdx = Math.floor(p.mouseX/cellSize);
 
-                    if (newRowIdx >=0 && newRowIdx < rows && newColIdx >=0 && newColIdx <cols){
+                    if (isInGrid(newRowIdx,newColIdx)){
                         var allowed = true;
                     } else {var allowed = false}
 
