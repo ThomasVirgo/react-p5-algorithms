@@ -38,10 +38,19 @@ const PathFinder = (props) => {
                 grid.push([]);
                 for (let j=0; j<cols; j++){
                     grid[i][j] = new Node(i,j);
+                    p.fill('white');
+                    p.rect(j*cellSize, i*cellSize, cellSize, cellSize);
                 }
             }
+            p.push();
             start = [0,0];
-            end = [Math.floor(rows/2), Math.floor(cols/2)]
+            p.fill('purple');
+            p.rect(start[1]*cellSize, start[0]*cellSize, cellSize, cellSize);
+
+            end = [Math.floor(rows/2), Math.floor(cols/2)];
+            p.fill('blue');
+            p.rect(end[1]*cellSize, end[0]*cellSize, cellSize, cellSize);
+            p.pop();
             grid[0][0]['start'] = true;
             grid[0][0]['current'] = true;
             grid[0][0]['distance'] = 0;
@@ -59,11 +68,11 @@ const PathFinder = (props) => {
             //create key;
             p.push()
             p.fill('purple');
-            p.rect(825, 100, cellSize, cellSize, 5)
+            p.rect(825, 100, cellSize, cellSize)
             p.fill('blue')
-            p.rect(825, 150, cellSize, cellSize, 5)
+            p.rect(825, 150, cellSize, cellSize)
             p.fill(p.color(245, 167, 66));
-            p.rect(825, 200, cellSize, cellSize, 5)
+            p.rect(825, 200, cellSize, cellSize)
 
             //text for key
             p.fill('white');
@@ -93,17 +102,17 @@ const PathFinder = (props) => {
                     if (currentNode.start===true){
                         p.push()
                         p.fill('purple');
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5)
+                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize)
                         p.pop()
                     }
                     else if (currentNode.end===true){
                         p.push()
                         p.fill('blue');
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5)
+                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize)
                         p.pop()
                     }
                     else {
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5);
+                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize);
                     }
                 }
             }
@@ -132,41 +141,6 @@ const PathFinder = (props) => {
 
         //start of draw loop
         p.draw = () => {
-            // redraw the grid on each iteration to match the current state..(should try implementing only drawing cells that change)
-            for (let i=0; i<rows; i++){
-                for (let j=0; j<cols; j++){
-                    let currentNode = grid[i][j]; 
-                    if (currentNode.start===true){
-                        p.push()
-                        p.fill('purple');
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5)
-                        p.pop()
-                    }
-                    else if (currentNode.end===true){
-                        p.push()
-                        p.fill('blue');
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5)
-                        p.pop()
-                    }
-                    else if (currentNode.obstacle===true){
-                        p.push()
-                        let c = p.color(245, 167, 66);
-                        p.fill(c);
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5)
-                        p.pop()
-                    }
-                    else if (currentNode.checked===true){
-                        p.push()
-                        let c = p.color(50, 55, 100);
-                        p.fill(c);
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5)
-                        p.pop()
-                    }
-                    else {
-                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize, 5);
-                    }
-                }
-            }
 
             rowIdx = Math.floor(p.mouseY/cellSize);
             colIdx = Math.floor(p.mouseX/cellSize);
@@ -211,7 +185,9 @@ const PathFinder = (props) => {
                     if (allowed && (newRowIdx != start[0] || newColIdx!= start[1])){
                         grid[start[0]][start[1]]['start'] = false; //remove color from previous start
                         grid[start[0]][start[1]]['current'] = false; 
-                        grid[start[0]][start[1]]['distance'] = Infinity; 
+                        grid[start[0]][start[1]]['distance'] = Infinity;
+                        p.fill('white');
+                        p.rect(start[1]*cellSize, start[0]*cellSize, cellSize, cellSize); //draw white cell
 
                         start[0] = newRowIdx;
                         start[1] = newColIdx;
@@ -219,6 +195,8 @@ const PathFinder = (props) => {
                         grid[newRowIdx][newColIdx]['start'] = true;
                         grid[newRowIdx][newColIdx]['current'] = true;
                         grid[newRowIdx][newColIdx]['distance'] = 0;
+                        p.fill('purple');
+                        p.rect(newColIdx*cellSize, newRowIdx*cellSize, cellSize, cellSize);
                     }
                 }
                 if (lockedEnd && mouseInCanvas){
@@ -231,9 +209,14 @@ const PathFinder = (props) => {
 
                     if (allowed && (newRowIdx != end[0] || newColIdx!= end[1])){
                         grid[end[0]][end[1]]['end'] = false; //remove color from previous end
+                        p.fill('white');
+                        p.rect(end[1]*cellSize, end[0]*cellSize, cellSize, cellSize); //draw white cell
+
                         end[0] = newRowIdx;
                         end[1] = newColIdx;
                         grid[newRowIdx][newColIdx]['end'] = true;
+                        p.fill('blue');
+                        p.rect(newColIdx*cellSize, newRowIdx*cellSize, cellSize, cellSize);
                     }
                 }
 
@@ -242,6 +225,9 @@ const PathFinder = (props) => {
                     let newColIdx = Math.floor(p.mouseX/cellSize);
                     if (isInGrid(newRowIdx, newColIdx)){
                         grid[newRowIdx][newColIdx]['obstacle'] = true;
+                        let c = p.color(245, 167, 66);
+                        p.fill(c);
+                        p.rect(newColIdx*cellSize, newRowIdx*cellSize, cellSize, cellSize);
                     }
                 }
             }
@@ -271,6 +257,13 @@ const PathFinder = (props) => {
                     let checkNode = grid[currRowIdx][currColIdx];
                     if (checkNode.visited == true || checkNode.obstacle == true){continue}; //no need to revisit nodes
                     checkNode.checked = true;
+
+                    if (checkNode.end != true){
+                        let c = p.color(50, 55, 100);
+                        p.fill(c);
+                        p.rect(currColIdx*cellSize, currRowIdx*cellSize, cellSize, cellSize);
+                    }
+                    
                     let testDistance = currentNode.distance + 1;
                     if (testDistance < checkNode.distance){
                         checkNode.distance = testDistance;
