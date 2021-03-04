@@ -57,9 +57,9 @@ const Sort = (props) => {
                     list[i] = next;
                     list[i + 1] = current;
                 }
-                drawBars(list);
+                
             }
-            
+            drawBars(list);
             if (changesMade == 0) {
                 p.noLoop();
                 console.log('completed list is', list);

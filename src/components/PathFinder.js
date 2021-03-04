@@ -30,39 +30,11 @@ const PathFinder = (props) => {
         maxHeight = window.innerHeight;
 
         const toggleLoop = () => {
-            if (p.isLooping()){
-                p.noLoop();
-            } else {
-                p.loop();
-            }
-            console.log('pressed button')
+            if (p.isLooping()){p.noLoop();} 
+            else {p.loop();}
         }
-        //start of setup function
-        p.setup = () => {
-            //p.createCanvas(maxWidth,maxHeight); // width, height.
-            let canvas = p.createCanvas(1000,600);
-            p.background(0);
-            rows = p.height/cellSize;
-            cols = 800/cellSize;
-            //create key;
-            p.push()
-            p.fill('purple');
-            p.rect(825, 100, cellSize, cellSize, 5)
-            p.fill('blue')
-            p.rect(825, 150, cellSize, cellSize, 5)
-            p.fill(p.color(245, 167, 66));
-            p.rect(825, 200, cellSize, cellSize, 5)
-            //text for key
-            p.fill('white');
-            p.text('Start cell, drag to move', 850, 100, 100, 50);
-            p.text('End cell, drag to move', 850, 150, 100, 50);
-            p.text('Obstacle', 850, 205, 100, 50);
-            p.pop()
-            //create start stop button
-            let startButton = p.createButton('Start/Stop');
-            startButton.position(canvas.position().x + 875, canvas.position().y + 250);
-            startButton.mousePressed(toggleLoop);
-            //create grid
+
+        const createStartGrid = () => {
             for (let i=0; i<rows; i++){
                 grid.push([]);
                 for (let j=0; j<cols; j++){
@@ -72,14 +44,53 @@ const PathFinder = (props) => {
                     }
                 }
             }
-            //initialise the starting cell and ending cell.
             start = [0,0];
             end = [Math.floor(rows/2), Math.floor(cols/2)]
             grid[0][0]['start'] = true;
             grid[0][0]['current'] = true;
             grid[0][0]['distance'] = 0;
             grid[Math.floor(rows/2)][Math.floor(cols/2)]['end'] = true;
+            p.noLoop();
+        }
+        //start of setup function
+        p.setup = () => {
+            //p.createCanvas(maxWidth,maxHeight); // width, height.
+            let canvas = p.createCanvas(1000,600);
+            p.background(0);
+            rows = p.height/cellSize;
+            cols = 800/cellSize;
+            
+            //create key;
+            p.push()
+            p.fill('purple');
+            p.rect(825, 100, cellSize, cellSize, 5)
+            p.fill('blue')
+            p.rect(825, 150, cellSize, cellSize, 5)
+            p.fill(p.color(245, 167, 66));
+            p.rect(825, 200, cellSize, cellSize, 5)
 
+            //text for key
+            p.fill('white');
+            p.text('Start cell, drag to move', 850, 100, 100, 50);
+            p.text('End cell, drag to move', 850, 150, 100, 50);
+            p.text('Obstacle', 850, 205, 100, 50);
+            p.pop()
+
+            //create start stop button
+            let startButton = p.createButton('Start/Stop');
+            startButton.position(canvas.position().x + 840, canvas.position().y + 250);
+            startButton.mousePressed(toggleLoop);
+            startButton.addClass('button1');
+
+            //create reset button
+            let resetButton = p.createButton('Reset');
+            resetButton.position(canvas.position().x + 920, canvas.position().y + 250);
+            resetButton.mousePressed(createStartGrid);
+            resetButton.addClass('button1');
+        
+           
+            createStartGrid();
+            
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
                     let currentNode = grid[i][j];
@@ -243,13 +254,7 @@ const PathFinder = (props) => {
             }
             // check the neighbouring nodes
             let idx1 = currentNode.rowIdx;
-            let idx2 = currentNode.colIdx
-
-            p.push();
-            p.fill('pink');
-            p.rect(idx2*cellSize, idx1*cellSize, cellSize, cellSize, 5)
-            p.pop();
-
+            let idx2 = currentNode.colIdx;
             let idxToCheck = [[idx1+1, idx2], [idx1-1, idx2], [idx1, idx2 +1], [idx1, idx2-1]];
             for (let entry in idxToCheck){
                 let currRowIdx = idxToCheck[entry][0];
