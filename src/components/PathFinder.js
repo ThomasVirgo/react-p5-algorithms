@@ -58,6 +58,39 @@ const PathFinder = (props) => {
             p.loop();
             searching = false;
         }
+
+        const generateMaze = () => {
+            let visited = [];
+            let frontier = [];
+            let current;
+            console.log('Ran maze generating function');
+            for (let i=0; i<rows; i++){
+                for (let j=0; j<cols; j++){
+                    grid[i][j]['obstacle'] = true;
+                    p.fill(p.color(245, 167, 66));
+                    p.rect(j*cellSize, i*cellSize, cellSize, cellSize);
+                }
+            }
+            p.fill('white');
+            let randJ = Math.floor(p.random()*cols);
+            let randI = Math.floor(p.random()*rows);
+            //p.rect(randJ*cellSize, randI*cellSize, cellSize, cellSize);
+            visited.push([randI,randJ]);
+            let adjacentCells = [[randI, randJ-1], [randI, randJ+1], [randI-1, randJ], [randI+1, randJ]];
+            for (let index in adjacentCells){
+                let entry = adjacentCells[index];
+                if (isInGrid(entry[0], entry[1])){
+                    frontier.push([entry[0], entry[1]]);
+                }
+            }
+            current = p.random(frontier); // make random frontier entry the current entry
+            frontier.splice(frontier.indexOf(current),1); //remove current entry from frontier list
+            let visitedAdjacent;
+
+
+        }
+
+
         //start of setup function
         p.setup = () => {
             let canvas = p.createCanvas(1000,600);
@@ -92,7 +125,11 @@ const PathFinder = (props) => {
             resetButton.position(canvas.position().x + 920, canvas.position().y + 250);
             resetButton.mousePressed(createStartGrid);
             resetButton.addClass('button1');
-        
+            
+            let mazeButton = p.createButton('Generate Maze');
+            mazeButton.position(canvas.position().x + 900, canvas.position().y + 300);
+            mazeButton.mousePressed(generateMaze);
+            mazeButton.addClass('button1');
            
             createStartGrid();
             
