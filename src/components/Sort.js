@@ -26,8 +26,8 @@ const Sort = (props) => {
     const Sketch = (p) => {
         let list = [];
         let canvasHeight = 600;
-        let canvasWidth = 1200;
-        let barWidth = 5;
+        let canvasWidth = 1400;
+        let barWidth = 10;
         let numBars = canvasWidth / barWidth;
 
         p.setup = () => {
