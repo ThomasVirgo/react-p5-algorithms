@@ -26,7 +26,6 @@ const PathFinder = (props) => {
         let grid, rows, cols, cellSize, rowIdx, colIdx, start, end, mouseInCanvas, aboveStart, aboveEnd, aboveEmpty, lockedStart, lockedEnd, aboveNode, currentNode;
         let searching = false;
         cellSize = 20;
-        grid = [];
 
         const toggleSearch = () => {
             searching = !searching;
@@ -34,6 +33,7 @@ const PathFinder = (props) => {
         }
 
         const createStartGrid = () => {
+            grid = [];
             for (let i=0; i<rows; i++){
                 grid.push([]);
                 for (let j=0; j<cols; j++){
@@ -60,45 +60,48 @@ const PathFinder = (props) => {
         }
 
         const generateMaze = () => {
+            createStartGrid();
             let available = [];
             let stack = [], current;
-            console.log('maze');
+            console.log('maze generated');
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
                     if (j%2 == 0 || i%2 == 0){
                         grid[i][j]['obstacle'] = true;
-                        p.fill(p.color(245, 167, 66));
+                        //p.fill(p.color(245, 167, 66));
+                        p.fill('black');
                         p.rect(j*cellSize, i*cellSize, cellSize, cellSize);
                     } else {
                         available.push(grid[i][j]);
                     }
                 }
             }
-            console.log(available);
             // choose initial cell randomly, mark it visited and push to stack. 
             let initialCell = p.random(available);
             initialCell.mazeVisited = true;
             stack.push(initialCell);
-            // current = stack.pop();
-            // console.log(current.getMazeNeighbours());
-
+            console.log(isInGrid(31,1));
             // while the stack is not empty
-            let mycount = 0;
-            while (stack.length > 0 && mycount < 100){
-                console.log('count is: ', mycount);
-                console.log('stack: ', stack);
+            while (stack.length > 0){
+            
                 //pop a cell from the stack and make it current cell
                 current = stack.pop();
                 let adjacent = current.getMazeNeighbours();
-                console.log('adjacent cells:', adjacent);
+                
                 // if the current cell has any unvisited neighbours
-                let unvisited = adjacent.filter(entry => grid[entry[0]][entry[1]]['mazeVisited'] == false);
                 
+                let unvisited = adjacent.filter(entry => {
+                    return grid[entry[0]][entry[1]]['mazeVisited'] == false
+                });
                 
-                if (unvisited.length >0){ // remove wall between current and unvisited
-                    console.log(unvisited);
+                if (unvisited.length >0){ // if the current cell has any neighbours which have not been visited
+                    //push the current cell to the stack
+                    stack.push(current);
+
+                    // choose one of the unvisited neighbours
                     unvisited = p.random(unvisited);
-                    console.log(unvisited);
+
+                    //remove the wall between current cell and chosen cell
                     let posX = unvisited[1];
                     let posY = unvisited[0];
                     let unvisitedCell = grid[posY][posX];
@@ -114,9 +117,10 @@ const PathFinder = (props) => {
                     //push chosen cell to stack
                     stack.push(unvisitedCell);
                 }
-                mycount++;
-                //break;
             }
+            console.log(grid);
+            // find start and end position set by user;
+            
         }
 
 
@@ -124,10 +128,10 @@ const PathFinder = (props) => {
 
         //start of setup function
         p.setup = () => {
-            let canvas = p.createCanvas(1020,620);
+            let canvas = p.createCanvas(1000,620);
             p.background(0);
             rows = p.height/cellSize;
-            cols = 800/cellSize;
+            cols = 820/cellSize;
 
             //create key;
             p.push()
@@ -147,23 +151,23 @@ const PathFinder = (props) => {
 
             //create start stop button
             let startButton = p.createButton('Start/Stop');
-            startButton.position(canvas.position().x + 840, canvas.position().y + 250);
+            startButton.position(canvas.position().x + 860, canvas.position().y + 250);
             startButton.mousePressed(toggleSearch);
             startButton.addClass('button1');
 
             //create reset button
             let resetButton = p.createButton('Reset');
-            resetButton.position(canvas.position().x + 920, canvas.position().y + 250);
+            resetButton.position(canvas.position().x + 930, canvas.position().y + 250);
             resetButton.mousePressed(createStartGrid);
             resetButton.addClass('button1');
             
             let mazeButton = p.createButton('Generate Maze');
-            mazeButton.position(canvas.position().x + 900, canvas.position().y + 300);
+            mazeButton.position(canvas.position().x + 915, canvas.position().y + 300);
             mazeButton.mousePressed(generateMaze);
             mazeButton.addClass('button1');
            
             createStartGrid();
-            
+            console.log(grid);
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
                     let currentNode = grid[i][j];
@@ -212,13 +216,14 @@ const PathFinder = (props) => {
                 let y = this.rowIdx;
                 // neighbour position, wall position
                 let neighbours = [[y, x+2, y, x+1], [y, x-2, y, x-1], [y+2, x, y+1, x], [y-2, x, y-1,x]];
+                let myRet = [];
                 for (let index in neighbours){
                     let entry = neighbours[index];
-                    if (!isInGrid(entry[0],entry[1])){
-                        neighbours.splice(index,1);
+                    if (isInGrid(entry[0],entry[1])){
+                        myRet.push(entry);
                     }
                 }
-                return neighbours;
+                return myRet;
             }
         }
 
