@@ -118,9 +118,42 @@ const PathFinder = (props) => {
                     stack.push(unvisitedCell);
                 }
             }
-            console.log(grid);
+        
             // find start and end position set by user;
-            
+            for (let i=0; i<rows; i++){
+                let searchRow = grid[i];
+                let userStart = searchRow.find(element => element.start == true);
+                let userEnd = searchRow.find(element => element.end == true);
+                if (userStart){
+                    let currStart = userStart;
+                    // remove properties making it start
+                    currStart.start = false;
+                    currStart.current = false;
+                    currStart.distance = Infinity;
+                }
+                if (userEnd){
+                    let currEnd = userEnd;
+                    // remove properties making it end
+                    currEnd.end = false;
+                }
+            }
+            //create new start and end in maze
+            p.push();
+            start = [1,1];
+            p.fill('purple');
+            p.rect(start[1]*cellSize, start[0]*cellSize, cellSize, cellSize);
+
+            end = [rows-2, cols-2];
+            p.fill('blue');
+            p.rect(end[1]*cellSize, end[0]*cellSize, cellSize, cellSize);
+            p.pop();
+            grid[1][1]['start'] = true;
+            grid[1][1]['current'] = true;
+            grid[1][1]['distance'] = 0;
+            grid[rows-2][cols-2]['end'] = true;
+            p.loop();
+            searching = false;
+
         }
 
 
