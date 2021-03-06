@@ -60,10 +60,66 @@ const PathFinder = (props) => {
         }
 
         const generateMaze = () => {
+            let available = [];
+            let stack = [], current;
             console.log('maze');
+            for (let i=0; i<rows; i++){
+                for (let j=0; j<cols; j++){
+                    if (j%2 == 0 || i%2 == 0){
+                        grid[i][j]['obstacle'] = true;
+                        p.fill(p.color(245, 167, 66));
+                        p.rect(j*cellSize, i*cellSize, cellSize, cellSize);
+                    } else {
+                        available.push(grid[i][j]);
+                    }
+                }
+            }
+            console.log(available);
+            // choose initial cell randomly, mark it visited and push to stack. 
+            let initialCell = p.random(available);
+            initialCell.mazeVisited = true;
+            stack.push(initialCell);
+            // current = stack.pop();
+            // console.log(current.getMazeNeighbours());
+
+            // while the stack is not empty
+            let mycount = 0;
+            while (stack.length > 0 && mycount < 100){
+                console.log('count is: ', mycount);
+                console.log('stack: ', stack);
+                //pop a cell from the stack and make it current cell
+                current = stack.pop();
+                let adjacent = current.getMazeNeighbours();
+                console.log('adjacent cells:', adjacent);
+                // if the current cell has any unvisited neighbours
+                let unvisited = adjacent.filter(entry => grid[entry[0]][entry[1]]['mazeVisited'] == false);
+                
+                
+                if (unvisited.length >0){ // remove wall between current and unvisited
+                    console.log(unvisited);
+                    unvisited = p.random(unvisited);
+                    console.log(unvisited);
+                    let posX = unvisited[1];
+                    let posY = unvisited[0];
+                    let unvisitedCell = grid[posY][posX];
+                    let wallX = unvisited[3];
+                    let wallY = unvisited[2];
+                    p.fill('white');
+                    p.rect(wallX*cellSize, wallY*cellSize, cellSize, cellSize);
+                    grid[wallY][wallX]['obstacle'] = false;
+
+                    // mark the chosen cell as visited
+                    unvisitedCell.mazeVisited = true;
+
+                    //push chosen cell to stack
+                    stack.push(unvisitedCell);
+                }
+                mycount++;
+                //break;
+            }
         }
 
-        
+
 
 
         //start of setup function
@@ -147,14 +203,22 @@ const PathFinder = (props) => {
                 this.checked = false;
                 this.obstacle = false;
                 this.mazeVisited = false;
-                this.mazeCurrent = false;
-                this.frontier = false;
-                this.wallTop = true;
-                this.wallRight = true;
-                this.wallBottom = true;
-                this.wallLeft = true;
                 this.rowIdx = i;
                 this.colIdx = j;
+            }
+
+            getMazeNeighbours = () => {
+                let x = this.colIdx;
+                let y = this.rowIdx;
+                // neighbour position, wall position
+                let neighbours = [[y, x+2, y, x+1], [y, x-2, y, x-1], [y+2, x, y+1, x], [y-2, x, y-1,x]];
+                for (let index in neighbours){
+                    let entry = neighbours[index];
+                    if (!isInGrid(entry[0],entry[1])){
+                        neighbours.splice(index,1);
+                    }
+                }
+                return neighbours;
             }
         }
 
