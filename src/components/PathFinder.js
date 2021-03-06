@@ -60,128 +60,15 @@ const PathFinder = (props) => {
         }
 
         const generateMaze = () => {
-            let visited = [];
-            let frontier = [];
-            let current;
-            console.log('Ran maze generating function');
-
-            const drawWalls = () => {
-                p.push();
-                p.strokeWeight(1);
-                for (let i=0; i<rows; i++){
-                    for (let j=0; j<cols; j++){
-                        let node = grid[i][j];
-                        let x = node.colIdx;
-                        let y = node.rowIdx;
-
-                        if (node.wallTop){p.stroke('orange')} 
-                        else {p.stroke('black')}
-                        p.line(x*cellSize, y*cellSize, (x+1)*cellSize, y*cellSize);
-
-                        if (node.wallBottom){p.stroke('orange')}
-                        else {p.stroke('black')}
-                        p.line(x*cellSize, y*cellSize, x*cellSize, (y+1)*cellSize);
-
-                        if (node.wallRight){p.stroke('orange')}
-                        else {p.stroke('black')}
-                        p.line((x+1)*cellSize, y*cellSize, (x+1)*cellSize, (y+1)*cellSize);
-
-                        if (node.wallLeft){p.stroke('orange')}
-                        else {p.stroke('black')}
-                        p.line(x*cellSize, y*cellSize, x*cellSize, (y+1)*cellSize);
-                    }
-                }
-                p.pop();
-            }
-
-            const isAnyFrontier = () => {
-                for (let i=0; i<rows; i++){
-                    let result = grid[i].some(entry => entry.frontier == true); // check each row to see if any frontier nodes
-                    if (result){
-                        return true;
-                    }
-                }
-                return false;
-            }
-            drawWalls();
-            p.fill('white');
-
-            //choose a random cell as the starting point, add to visited array.
-            let randJ = Math.floor(p.random()*cols);
-            let randI = Math.floor(p.random()*rows);
-            current = grid[randI][randJ];
-            current.mazeVisited = true;
-            current.mazeCurrent = true;
-            visited.push(current);
-
-            let myCounter = 0;
-
-            while (isAnyFrontier() == true && myCounter < 100 || myCounter==0){
-                myCounter ++;
-                console.log('looping');
-
-                let x = current.colIdx;
-                let y = current.rowIdx;
-                let adjacentCells = [[y, x-1], [y, x+1], [y-1, x], [y+1, x]];
-                // add all unvisited cells that are adjacent to the current cell to the frontier set.
-                for (let index in adjacentCells){
-                    let entry = adjacentCells[index];
-                    if (isInGrid(entry[0], entry[1]) && grid[entry[0]][entry[1]]['mazeVisited'] == false){
-                        grid[entry[0]][entry[1]]['frontier'] = true;
-                        frontier.push(grid[entry[0]][entry[1]]);
-                    }
-                }
-
-                // choose a cell randomly from the frontier set and make it the current cell, removing it from the frontier set and adding to visited set. 
-                current = p.random(frontier); // choose a cell randomly from the frontier set. 
-                current.frontier = false;
-                frontier.splice(frontier.indexOf(current),1); //remove it from the frontier set.
-                current.mazeVisited = true; //add to the visited set
-                current.mazeCurrent = true;
-                visited.push(current);
-                // console.log('visited set: ', visited);
-                // console.log('frontier set: ', frontier);
-                // console.log('current cell: ', current);
-
-                // remove the wall between the current cell and a random adjacent cell that belongs to the visited set.
-                let visitedAdjacent = []; 
-                for (let index in visited){
-                    let node = visited[index];
-                    if (current.rowIdx == node.rowIdx && (node.colIdx == current.colIdx-1 || node.colIdx == current.colIdx+1)){
-                        visitedAdjacent.push(node);
-                        if (node.colIdx == current.colIdx-1){
-                            console.log('same row, node on left of current');
-                        } else {
-                            console.log('same row, node on right of current');
-                        }
-                    }
-                    else if (current.colIdx == node.colIdx && (node.rowIdx == current.rowIdx-1 || node.rowIdx == current.rowIdx+1)){
-                        visitedAdjacent.push(node);
-                        if (node.rowIdx == current.rowIdx-1){
-                            console.log('same column, node on top of current');
-                        } else {
-                            console.log('same column, node is below current');
-                        }
-                    }
-                }
-                let chosenVisitedAdjacent = p.random(visitedAdjacent);
-                let colDiff = current.colIdx - chosenVisitedAdjacent.colIdx;
-                let rowDiff = current.rowIdx - chosenVisitedAdjacent.rowIdx;
-                
-                
-            }
-
-
-            
-
-            
-
+            console.log('maze');
         }
+
+        
 
 
         //start of setup function
         p.setup = () => {
-            let canvas = p.createCanvas(1000,600);
+            let canvas = p.createCanvas(1020,620);
             p.background(0);
             rows = p.height/cellSize;
             cols = 800/cellSize;
